@@ -119,8 +119,8 @@ public enum Command {
 	HSET 		(RequestType.KEY_KEY_VALUE, ResponseType.BOOLEAN),
 	HGET 		(RequestType.KEY_VALUE, 	ResponseType.BULK),
     HSETNX 		(RequestType.KEY_KEY_VALUE, ResponseType.NUMBER),
-    HMSET 		(RequestType.MULTI_KEY, ResponseType.BOOLEAN),
-    HMGET 		(RequestType.MULTI_KEY, ResponseType.MULTI_BULK),
+    HMSET 		(RequestType.MULTI_BULK, ResponseType.BOOLEAN),
+    HMGET 		(RequestType.MULTI_BULK, ResponseType.MULTI_BULK),
     HEXISTS 	(RequestType.KEY_VALUE, 	ResponseType.BOOLEAN),
 	HDEL 		(RequestType.KEY_VALUE, 	ResponseType.BOOLEAN),
 	HLEN 		(RequestType.KEY, 			ResponseType.NUMBER),
@@ -252,6 +252,8 @@ public enum Command {
     	KEY_CNT_VALUE,  // TODO: this should be key value cnt ...
     	/**  */
     	MULTI_KEY,
+
+        MULTI_BULK,
     	/**  */
     	BULK_SET
     }

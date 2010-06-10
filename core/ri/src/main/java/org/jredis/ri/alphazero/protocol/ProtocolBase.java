@@ -212,6 +212,24 @@ public abstract class ProtocolBase implements Protocol {
 			}
 			break;
 
+            case MULTI_BULK:
+            {
+                int count = args.length + 1;
+                buffer.write(("*"+count).getBytes());
+                buffer.write(CRLF);
+                final byte[] commandBytes = cmd.bytes;
+                buffer.write(("$"+commandBytes.length).getBytes());
+                buffer.write(CRLF);
+                buffer.write(commandBytes);
+                buffer.write(CRLF);
+                for (byte[] arg : args) {
+                    buffer.write(("$" + arg.length).getBytes());
+                    buffer.write(CRLF);
+                    buffer.write(arg);
+                    buffer.write(CRLF);
+                }
+            }
+            break;
 			case MULTI_KEY:
 			{
 				int keycnt = args.length;
