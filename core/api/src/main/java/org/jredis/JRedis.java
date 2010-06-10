@@ -78,7 +78,32 @@ public interface JRedis {
 	 * @Redis QUIT
 	 */
 	public void quit ();
-	
+
+    // ------------------------------------------------------------------------
+    // "Transactions"
+    // ------------------------------------------------------------------------
+
+    /**
+     * Starts a transaction
+     * @return The current instance
+     * @throws RedisException A failure occurred starting the transaction
+     */
+    public void multi() throws RedisException;
+
+    /**
+     * Commits a transaction
+     *
+     * @throws RedisException A failure occurred committing the transaction
+     */
+    public void exec() throws RedisException;
+
+    /**
+     * Rolls back a transaction
+     *
+     * @throws RedisException A failure occurred rolling back the transaction
+     */
+    public void discard() throws RedisException;
+
 	// ------------------------------------------------------------------------
 	// "Commands operating on string values"
 	// ------------------------------------------------------------------------
@@ -799,7 +824,23 @@ public interface JRedis {
 	// ------------------------------------------------------------------------
 	// Commands operating on hashes
 	// ------------------------------------------------------------------------
-	
+
+    /**
+     * @Redis HMSET
+     * @param fields
+     * @return
+     */
+    @Redis(versions="1.3.n")
+    public boolean hmset(String hashKey, Map<String, byte[]> fields) throws RedisException;
+
+    /**
+     * @Redis HMGET
+     * @param hashKey
+     * @param fields
+     */
+    @Redis(versions="1.3.n")
+    public List<byte[]> hmget(String hashKey, String...fields) throws RedisException;
+
 	/**
 	 * @Redis HSET
 	 * @param key

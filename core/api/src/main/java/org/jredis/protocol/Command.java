@@ -118,7 +118,10 @@ public enum Command {
 	// Commands operating on hashes
 	HSET 		(RequestType.KEY_KEY_VALUE, ResponseType.BOOLEAN),
 	HGET 		(RequestType.KEY_VALUE, 	ResponseType.BULK),
-	HEXISTS 	(RequestType.KEY_VALUE, 	ResponseType.BOOLEAN),
+    HSETNX 		(RequestType.KEY_KEY_VALUE, ResponseType.NUMBER),
+    HMSET 		(RequestType.MULTI_KEY, ResponseType.BOOLEAN),
+    HMGET 		(RequestType.MULTI_KEY, ResponseType.MULTI_BULK),
+    HEXISTS 	(RequestType.KEY_VALUE, 	ResponseType.BOOLEAN),
 	HDEL 		(RequestType.KEY_VALUE, 	ResponseType.BOOLEAN),
 	HLEN 		(RequestType.KEY, 			ResponseType.NUMBER),
 	HKEYS 		(RequestType.KEY, 			ResponseType.MULTI_BULK),
@@ -170,7 +173,7 @@ public enum Command {
 	 * @param reqType the {@link RequestType} of the Command
 	 * @param respType the {@link ResponseType} of the Command
 	 */
-	Command (RequestType reqType, ResponseType respType) { 
+	Command (RequestType reqType, ResponseType respType) {
 		this.code = this.name();
 		
 		if(code.indexOf("$OPT") > 0) 

@@ -128,8 +128,26 @@ public abstract class JRedisSupport implements JRedis {
 	public void bgsave() throws RedisException {
 		this.serviceRequest(Command.BGSAVE);
 	}
-	
-//	@Override
+
+//    @Override
+    @Redis(versions="2.1.n")
+    public void multi() throws RedisException {
+        this.serviceRequest(Command.MULTI);
+    }
+
+//    @Override
+    @Redis(versions="2.1.n")
+    public void exec() throws RedisException {
+        this.serviceRequest(Command.EXEC);
+    }
+
+//    @Override
+    @Redis(versions="2.1.n")
+    public void discard() throws RedisException {
+        this.serviceRequest(Command.DISCARD);
+    }
+
+    //	@Override
 	public String bgrewriteaof() throws RedisException {
 		/* boolean ValueRespose */
 		String value = null;
@@ -582,11 +600,62 @@ public abstract class JRedisSupport implements JRedis {
 	boolean smove (String srcKey, String destKey, T object) throws RedisException {
 		return smove (srcKey, destKey, DefaultCodec.encode(object));
 	}
-		   
+
 	// ------------------------------------------------------------------------
 	// Commands operating on hashes
 	// ------------------------------------------------------------------------
-	
+    public List<byte[]> hmget(String hashKey, String...fields) throws RedisException {
+        if(null == fields || fields.length == 0) throw new IllegalArgumentException("no fields specified");
+        byte[] keydata = null;
+        byte[][] keybytes = new byte[fields.length+1][];
+        int i=0;
+        keybytes[i++] = getKeyBytes(hashKey);
+        for(String k : fields) {
+            if((keydata = getKeyBytes(k)) == null)
+                throw new IllegalArgumentException ("invalid key => ["+k+"] @ index: " + i);
+
+            keybytes[i++] = keydata;
+        }
+
+        List<byte[]> multiBulkData= null;
+        try {
+            MultiBulkResponse MultiBulkResponse = (MultiBulkResponse) this.serviceRequest(Command.HMGET, keybytes);
+            multiBulkData = MultiBulkResponse.getMultiBulkData();
+        }
+        catch (ClassCastException e){
+            throw new ProviderException("Expecting a MultiBulkResponse here => " + e.getLocalizedMessage(), e);
+        }
+        return multiBulkData;
+
+    }
+
+    public boolean hmset(String hashKey, Map<String, byte[]> fields) throws RedisException {
+        byte[] hashKeyBytes = null;
+        if((hashKeyBytes = getKeyBytes(hashKey)) == null)
+            throw new IllegalArgumentException ("invalid key => ["+hashKey+"]");
+
+        KeyCodec codec = DefaultKeyCodec.provider();
+        byte[][] mappings = new byte[(fields.size()*2)+1][];
+        int i = 0;
+        mappings[i++] = hashKeyBytes;
+        for (Entry<String, byte[]> e : fields.entrySet()){
+            mappings[i++] = codec.encode(e.getKey());
+            mappings[i++] = e.getValue();
+        }
+
+        /* boolean ValueRespose */
+        boolean response;
+        try {
+            ValueResponse valResponse = (ValueResponse) this.serviceRequest(Command.HMSET, mappings);
+            response = valResponse.getBooleanValue();
+        }
+        catch (ClassCastException e){
+            throw new ProviderException("Expecting a ValueResponse here => " + e.getLocalizedMessage(), e);
+        }
+        return response;
+
+    }
+
 	public boolean hset(String hashKey, String hashField, byte[] value)  throws RedisException {
 		byte[] hashKeyBytes = null;
 		if((hashKeyBytes = getKeyBytes(hashKey)) == null) 
