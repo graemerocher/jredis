@@ -214,7 +214,7 @@ public class PipelineInAction {
     		do {
 	    		int cnt = 0;
 	    		Util.Timer timer = Timer.startNewTimer();
-	    		Future<ResponseStatus> futureStat = null;
+	    		Future<Long> futureStat = null;
 	    		while(cnt < reqCnt){
 	    			futureStat = pipeline.lpush(key, data);
 	    			cnt++;

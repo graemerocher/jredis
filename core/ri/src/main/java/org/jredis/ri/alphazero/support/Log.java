@@ -28,15 +28,13 @@ import org.apache.commons.logging.LogFactory;
  */
 public class Log {
 	public static org.apache.commons.logging.Log logger = LogFactory.getLog("JREDIS");
-//	public static final Logger logger = LoggerFactory.getLogger("-- JREDIS --");
+//	public static final Logger logger = LoggerFactory.getLog("-- JREDIS --");
 	public enum Category { INFO, ERROR, PROBLEM, BUG }
 
 	public static final void log (String msg)   { _loginfo (msg); }
 	public static final void error (String msg)   { _log (Category.ERROR, msg); }
 	public static final void problem (String msg) { _log (Category.PROBLEM, msg); }
 	public static final void bug (String msg)     { _log (Category.BUG, msg); }
-
-  public static Logger logger = Logger.getLogger("org.jredis.JRedis");
 
 	public static final void log (String format, Object...args) {
 		_loginfo(format, args);
