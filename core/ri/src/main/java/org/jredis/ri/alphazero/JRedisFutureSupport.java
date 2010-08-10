@@ -179,7 +179,7 @@ public abstract class JRedisFutureSupport implements JRedisFuture {
 		Future<Response> futureResponse = this.queueRequest(Command.RENAMENX, oldkeydata, newkeydata);
 		return new FutureBoolean(futureResponse);
 	}
-	public FutureStatus rpush(String key, byte[] value)  {
+	public FutureLong rpush(String key, byte[] value)  {
 		byte[] keybytes = null;
 		if((keybytes = getKeyBytes(key)) == null) 
 			throw new IllegalArgumentException ("invalid key => ["+key+"]");
@@ -187,9 +187,51 @@ public abstract class JRedisFutureSupport implements JRedisFuture {
 		if(value == null) 
 			throw new IllegalArgumentException ("null value");
 		
-		return new FutureStatus(this.queueRequest(Command.RPUSH, keybytes, value));
+		return new FutureLong(this.queueRequest(Command.RPUSH, keybytes, value));
 	}
-	
+
+	public FutureLong rpushx(String key, byte[] value) {
+		byte[] keybytes = null;
+		if ((keybytes = getKeyBytes(key)) == null)
+			throw new IllegalArgumentException ("invalid key => ["+key+"]");
+
+		if (value == null)
+			throw new IllegalArgumentException ("null value");
+
+		return new FutureLong(this.queueRequest(Command.RPUSHX, keybytes, value));
+	}
+
+	public FutureLong lpushx(String key, byte[] value) {
+		byte[] keybytes = null;
+		if ((keybytes = getKeyBytes(key)) == null)
+			throw new IllegalArgumentException ("invalid key => ["+key+"]");
+
+		if (value == null)
+			throw new IllegalArgumentException ("null value");
+
+		return new FutureLong(this.queueRequest(Command.LPUSHX, keybytes, value));
+	}
+
+	public FutureLong linsert(String key, boolean after, byte[] oldvalue, byte[] newvalue) {
+		byte[] keybytes = null;
+		if ((keybytes = getKeyBytes(key)) == null)
+			throw new IllegalArgumentException ("invalid key => ["+key+"]");
+    byte[][] bulk = new byte[3][];
+    bulk[0] = keybytes;
+    bulk[1] = (after ? "AFTER" : "BEFORE").getBytes();
+    bulk[2] = oldvalue;
+    bulk[3] = newvalue;
+		return new FutureLong(this.queueRequest(Command.LINSERT, bulk));
+	}
+
+	public FutureLong linsertAfter(String key, byte[] oldvalue, byte[] newvalue) {
+    return linsert(key, true, oldvalue, newvalue);
+  }
+
+	public FutureLong linsertBefore(String key, byte[] oldvalue, byte[] newvalue) {
+    return linsert(key, false, oldvalue, newvalue);
+  }
+
 //	@Override
 	public FutureByteArray rpoplpush (String srcList, String destList)  {
 		byte[] srckeybytes = null;
@@ -203,16 +245,16 @@ public abstract class JRedisFutureSupport implements JRedisFuture {
 		return new FutureByteArray(futureResponse);
 	}
 //	@Override
-	public FutureStatus rpush(String key, String value) {
+	public FutureLong rpush(String key, String value) {
 //		rpush(key, DefaultCodec.encode(value));
 		return rpush(key, DefaultCodec.encode(value));
 	}
 //	@Override
-	public FutureStatus rpush(String key, Number value) {
+	public FutureLong rpush(String key, Number value) {
 		return rpush(key, String.valueOf(value).getBytes());
 	}
 //	@Override
-	public <T extends Serializable> FutureStatus rpush (String key, T value)
+	public <T extends Serializable> FutureLong rpush (String key, T value)
 	{
 		return rpush(key, DefaultCodec.encode(value));
 	}
@@ -1104,7 +1146,7 @@ public abstract class JRedisFutureSupport implements JRedisFuture {
 
 
 //	@Override
-	public FutureStatus lpush(String key, byte[] value) {
+	public FutureLong lpush(String key, byte[] value) {
 		byte[] keybytes = null;
 		if((keybytes = getKeyBytes(key)) == null) 
 			throw new IllegalArgumentException ("invalid key => ["+key+"]");
@@ -1113,18 +1155,18 @@ public abstract class JRedisFutureSupport implements JRedisFuture {
 			throw new IllegalArgumentException ("null value");
 		
 		
-		return new FutureStatus(this.queueRequest(Command.LPUSH, keybytes, value));
+		return new FutureLong(this.queueRequest(Command.LPUSH, keybytes, value));
 	}
 //	@Override
-	public FutureStatus lpush(String key, String value) {
+	public FutureLong lpush(String key, String value) {
 		return lpush(key, DefaultCodec.encode(value));
 	}
 //	@Override
-	public FutureStatus lpush(String key, Number value) {
+	public FutureLong lpush(String key, Number value) {
 		return lpush(key, String.valueOf(value).getBytes());
 	}
 //	@Override
-	public <T extends Serializable> FutureStatus lpush (String key, T value)
+	public <T extends Serializable> FutureLong lpush (String key, T value)
 	{
 		return lpush(key, DefaultCodec.encode(value));
 	}

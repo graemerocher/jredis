@@ -30,14 +30,16 @@ public class Log {
 	public static org.apache.commons.logging.Log logger = LogFactory.getLog("JREDIS");
 //	public static final Logger logger = LoggerFactory.getLogger("-- JREDIS --");
 	public enum Category { INFO, ERROR, PROBLEM, BUG }
-	
+
 	public static final void log (String msg)   { _loginfo (msg); }
 	public static final void error (String msg)   { _log (Category.ERROR, msg); }
 	public static final void problem (String msg) { _log (Category.PROBLEM, msg); }
 	public static final void bug (String msg)     { _log (Category.BUG, msg); }
-	
-	public static final void log (String format, Object...args)   { 
-		_loginfo (format, args); 
+
+  public static Logger logger = Logger.getLogger("org.jredis.JRedis");
+
+	public static final void log (String format, Object...args) {
+		_loginfo(format, args);
 	}
 	private static final void _log (Category cat, String msg) {
 //		System.err.format("-- JREDIS -- %s: %s\n", cat, msg).flush();
